@@ -1,0 +1,29 @@
+- hosts: all
+  become: yes
+  vars_prompt:
+  - name: ip
+    prompt: "Enter the port number to be exposed: "
+    private: no
+  tasks: 
+  - name: Installing the HTTPD software
+    package:
+     name: "httpd"
+     state: present
+  - name: Changing the config file 
+    template: 
+      src: httpd.conf
+      dest: /etc/httpd/conf/httpd.conf
+    notify: Restart HTTPD when Changed
+  - name: Copying content
+    copy: 
+      src: index.html
+      dest: /var/www/html/
+
+  handlers:
+    - name: Restart HTTPD when Changed  
+      service: 
+        name: "httpd"
+        state: restarted
+
+           
+
